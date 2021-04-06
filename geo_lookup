@@ -15,12 +15,13 @@ declare DNSSRV
 #
 # If there were no arguments provided, and they didn't ask for help, prompt for the input and continue.
 #
-	if [ $# -lt 1 ]
-		then
-			echo -e -n "\nEnter a 2 Letter Country Abbreviation (e.g., gb, de, au):  "
+	if [ $# -lt 1 ]; then
+		while [[ ! $CC =~ ^[A-Za-z]{2}$ ]]; do
+			echo -e "\nEnter a 2 Letter Country Abbreviation (e.g., gb, de, au):  "
 			read -r CC
-		else
-			CC=$1
+		done
+	else
+		CC=$1
 	fi
 #
 # Look up DNS Servers for the Country Code
@@ -60,14 +61,22 @@ fi
 echo 
 
 # Ask how many to poll?
+# set a temporary variable "snum" to be larger than the number of items in the DNSSRV array count SRVTOT
+#
 ((snum=$SRVTOT+1))
+
+#
+# Now the while-do loop should continue until we get a value between 1 and the number of servers, and nothing else.
+#
 while [ $snum -gt $SRVTOT ]; do
-	echo -e -n "How many of the $SRVTOT servers in $lcc should be tested [${DNSSRV[0]}]?  " 
+	echo -e -n "How many of the $SRVTOT servers in $lcc should be tested (i.e., a number from [1-$SRVTOT])?  " 
 	read -r newnum
 	if [ -z $newnum ] ; then 
-		((snum=1))
+		((snum=$SRVTOT+1))
+	elif (( $newnum >= 1 && $newnum <= $SRVTOT )) ; then
+                ((snum=$newnum))
 	else 
-		((snum=$newnum))
+		((snum=$SRVTOT+1))
 	fi
 done
 #
