@@ -1,0 +1,46 @@
+#!/bin/bash
+#
+# declare the DNSSRV list array
+declare -A DNSSRV
+
+# This edit was made in the Visual Studio Code editor.  It picked up the VI command set.  Neat!
+# Check whether the user had supplied -h or --help.  If yes, then display usage example.
+#
+	if [[ $1 == "--help" || $1 == "-h" ]]
+		then
+			echo -e "\nThis script will attempt to resolve NAPTR for Fuze's public GeoDNS domain by using a Public DNS Server in the chosen country.  Enter a 2 letter country code (e.g., uk, de, au, etc.).\nThe command issued is:\ndig @SERVER NAPTR edge.uc.fuze.site +short\n\nUsage: $0 <2 Letter Country Abbreviation>."
+			echo -e "\nThis script references https://public-dns.info/#countries and the lists of DNS servers found on pages like https://public-dns.info/nameserver/gb.txt for the UK.  The script uses the country code provided by the users' input to find the first IP address from such a list on the public-dns.info website." 
+			exit 1
+	fi
+#
+# If there were no arguments provided, and they didn't ask for help, prompt for the input and continue.
+#
+	if [ $# -lt 1 ]
+		then
+			echo -e -n "\nEnter a 2 Letter Country Abbreviation (e.g., UK, DE, AU):  "
+			read -r CC
+		else
+			CC=$1
+	fi
+#
+# Look up DNS Servers for the Country Code
+#
+lcc=`echo $CC | tr '[:upper:]' '[:lower:]'`
+
+echo -e "According to https://public-dns.info:\n"
+for i in {1..3}
+	do
+		DNSSRV[$i]=$(curl -s https://public-dns.info/nameserver/$lcc.txt | head -$i | tail -1)
+		echo -e "\t${DNSSRV[$i]}"
+	done
+echo -e "\n are all DNS servers in $lcc.  Let's try them all!\n"
+
+#
+# Lookup the Fuze Domain from the DNS Server in that Country
+
+for number in {1..3}
+	do
+       		echo -e "dig @${DNSSRV[$number]} NAPTR edge.uc.fuze.site +short | sort\n"
+       		dig @${DNSSRV[$number]} NAPTR edge.uc.fuze.site +short | sort
+		echo 
+	done
