@@ -5,4 +5,4 @@ dig @SERVER NAPTR edge.uc.fuze.site +short
 
 Usage: ./geo_lookup <2 Letter Country Abbreviation>.
 
-This script references https://public-dns.info/#countries and the lists of DNS servers found on pages like https://public-dns.info/nameserver/gb.txt for the UK.  The script uses the country code provided by the users' input to find the first IP address from such a list on the public-dns.info website.
+This script references https://public-dns.info/#countries and the lists of DNS servers found on pages like https://public-dns.info/nameserver/gb.txt for example.  The script uses the country code provided to find the first IP address from such a list on the public-dns.info website.
