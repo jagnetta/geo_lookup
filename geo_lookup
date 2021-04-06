@@ -1,6 +1,7 @@
 #!/bin/bash
 #
 # declare the DNSSRV list array
+
 declare DNSSRV
 
 # Check whether the user had supplied -h or --help.  If yes, then display usage example.
@@ -50,7 +51,7 @@ if [ $SRVTOT -lt 20 ] ; then
     		printf "%-8s\n" "${value}"
 	done | column
 else
-	echo "Printing the first 20 from the list, but there are :"
+	echo "Printing the first 20 from the list, but there are $SRVTOT DNS servers in $lcc:"
 	for k in {0..19}; do
     		printf "%-8s\n" "${DNSSRV[$k]}"
 	done | column
@@ -76,7 +77,8 @@ done
 echo "Here is the list of DNS Servers to test:"
 for i in $(seq 0 $snum)
 	do
-		echo -e "\t${DNSSRV[$i]}"
+		((m=$i+1))
+		echo -e "\t$m.  ${DNSSRV[$i]}"
 	done
 #
 # Lookup the Fuze Domain from the DNS Server in that Country
