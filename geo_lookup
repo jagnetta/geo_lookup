@@ -60,7 +60,7 @@ echo -e "\n are all DNS servers in $lcc.  Let's try them now!\n"
 
 for j in $(seq 0 $snum)
 	do
-       		echo -e "dig @${DNSSRV[$j]} NAPTR edge.uc.fuze.site +short | sort\n"
+       		echo -e "dig @${DNSSRV[$j]} NAPTR edge.uc.fuze.site +short +timeout=3 | sort\n"
        		dig @${DNSSRV[$j]} NAPTR edge.uc.fuze.site +short +timeout=3 | sort
 		echo 
 	done
