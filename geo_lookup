@@ -61,7 +61,7 @@ echo
 # Ask how many to poll?
 ((snum=$SRVTOT+1))
 while [ $snum -gt $SRVTOT ]; do
-	echo -e -n "How many of the $SRVTOT servers in $lcc should be tested? [1]" 
+	echo -e -n "How many of the $SRVTOT servers in $lcc should be tested [${DNSSRV[0]}]?  " 
 	read -r newnum
 	if [ -z $newnum ] ; then 
 		((snum=1))
