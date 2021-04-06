@@ -17,7 +17,7 @@ declare DNSSRV
 #
 	if [ $# -lt 1 ]; then
 		while [[ ! $CC =~ ^[A-Za-z]{2}$ ]]; do
-			echo -e "\nEnter a 2 Letter Country Abbreviation (e.g., gb, de, au):  "
+			echo -e -n "Enter a 2 Letter Country Abbreviation (e.g., gb, de, au):  "
 			read -r CC
 		done
 	else
