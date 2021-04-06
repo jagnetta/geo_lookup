@@ -61,10 +61,10 @@ echo
 # Ask how many to poll?
 ((snum=$SRVTOT+1))
 while [ $snum -gt $SRVTOT ]; do
-	echo -e -n "How many of the $SRVTOT servers in $lcc should be tested?  " 
+	echo -e -n "How many of the $SRVTOT servers in $lcc should be tested? [1]" 
 	read -r newnum
 	if [ -z $newnum ] ; then 
-		((snum=$SRVTOT+1))
+		((snum=1))
 	else 
 		((snum=$newnum))
 	fi
@@ -84,6 +84,7 @@ for i in $(seq 0 $snum)
 for j in $(seq 0 $snum)
 	do
 		echo -e "*** Now Testing ${DNSSRV[$j]} ***"
+		echo
        		echo -e "dig @${DNSSRV[$j]} NAPTR edge.uc.fuze.site +short +timeout=3 | sort\n"
        		dig @${DNSSRV[$j]} NAPTR edge.uc.fuze.site +short +timeout=3 | sort
 		echo 
