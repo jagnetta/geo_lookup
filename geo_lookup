@@ -15,31 +15,37 @@ declare DNSSRV
 #
 # If there were no arguments provided, and they didn't ask for help, prompt for the input and continue.
 #
+((SRVTOT=0))
 	if [ $# -lt 1 ]; then
-		while [[ ! $CC =~ ^[A-Za-z]{2}$ ]]; do
+		while [[ ! $CC =~ ^[A-Za-z]{2}$ || ($SRVTOT = 0) ]]; do
 			echo -e -n "Enter a 2 Letter Country Abbreviation (e.g., gb, de, au):  "
 			read -r CC
+			lcc=`echo $CC | tr '[:upper:]' '[:lower:]'`
+			curl -s https://public-dns.info/nameserver/$lcc.txt > ./dnssrv_list.txt
+			IFS=$'\n' read -d '' -r -a DNSSRV < ./dnssrv_list.txt
+			rm ./dnssrv_list.txt
+			((SRVTOT=${#DNSSRV[@]}))
+			echo "Found $SRVTOT DNS Servers in $lcc"
 		done
 	else
-		CC=$1
+		CC=`echo $1`
+                lcc=`echo $CC | tr '[:upper:]' '[:lower:]'`
+                curl -s https://public-dns.info/nameserver/$lcc.txt > ./dnssrv_list.txt
+                IFS=$'\n' read -d '' -r -a DNSSRV < ./dnssrv_list.txt
+                rm ./dnssrv_list.txt
+                ((SRVTOT=${#DNSSRV[@]}))
+		echo "Found $SRVTOT DNS Servers in $CC"
+                while [[ ($SRVTOT = 0) ]]; do
+                        echo -e -n "Enter a 2 Letter Country Abbreviation (e.g., gb, de, au):  "
+                        read -r CC
+                        lcc=`echo $CC | tr '[:upper:]' '[:lower:]'`
+                        curl -s https://public-dns.info/nameserver/$lcc.txt > ./dnssrv_list.txt
+                        IFS=$'\n' read -d '' -r -a DNSSRV < ./dnssrv_list.txt
+                        rm ./dnssrv_list.txt
+                        ((SRVTOT=${#DNSSRV[@]}))
+                        echo "Found $SRVTOT DNS Servers in $lcc"
+		done
 	fi
-#
-# Look up DNS Servers for the Country Code
-#
-# First, just make sure the CC value is changed to lower case, and set the value to lcc
-#
-lcc=`echo $CC | tr '[:upper:]' '[:lower:]'`
-
-#
-# get the list of files from the URL below.  set the array (majick), then delete the file
-
-curl -s https://public-dns.info/nameserver/$lcc.txt > ./dnssrv_list.txt
-
-IFS=$'\n' read -d '' -r -a DNSSRV < ./dnssrv_list.txt
-
-rm ./dnssrv_list.txt
-
-SRVTOT=${#DNSSRV[@]}
 #
 # How many servers are in the array?
 echo -e "According to https://public-dns.info there are $SRVTOT DNS servers in $lcc at this time!\n"
@@ -69,10 +75,12 @@ echo
 # Now the while-do loop should continue until we get a value between 1 and the number of servers, and nothing else.
 #
 while [ $snum -gt $SRVTOT ]; do
-	echo -e -n "How many of the $SRVTOT servers in $lcc should be tested (i.e., a number from [1-$SRVTOT])?  " 
+	echo -e -n "How many of the $SRVTOT servers in $lcc should be tested (i.e., a number from [1-$SRVTOT], 0 to exit)?  " 
 	read -r newnum
 	if [ -z $newnum ] ; then 
 		((snum=$SRVTOT+1))
+	elif (( $newnum == 0 )) ; then
+		exit 
 	elif (( $newnum >= 1 && $newnum <= $SRVTOT )) ; then
                 ((snum=$newnum))
 	else 
