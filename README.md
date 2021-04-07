@@ -1,5 +1,5 @@
 
-This script will attempt to resolve NAPTR for Fuze's public GeoDNS domain by using a Public DNS Server in the chosen country.  Enter a 2 letter country code (e.g., uk, de, au, etc.).
+This script will attempt to resolve NAPTR for Fuze's public GeoDNS domain by using a Public DNS Server in the chosen country.  Enter a 2 letter country code (e.g., gb, de, au, etc.).
 The command issued is:
 dig @SERVER NAPTR edge.uc.fuze.site +short
 
