@@ -34,7 +34,6 @@ declare DNSSRV
                 IFS=$'\n' read -d '' -r -a DNSSRV < ./dnssrv_list.txt
                 rm ./dnssrv_list.txt
                 ((SRVTOT=${#DNSSRV[@]}))
-		echo "Found $SRVTOT DNS Servers in $CC"
                 while [[ ($SRVTOT = 0) ]]; do
                         echo -e -n "Enter a 2 Letter Country Abbreviation (e.g., gb, de, au):  "
                         read -r CC
