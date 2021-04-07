@@ -108,14 +108,11 @@ for i in $(seq 0 $snum)
 #
 # Lookup the Fuze Domain from the DNS Server in that Country
 
-echo -e "***************************************************"
 for j in $(seq 0 $snum)
 	do
 		echo -e "*** Now Testing ${DNSSRV[$j]}, <Ctrl+c> to skip ***"
-		echo -e "***************************************************"
 		echo
        		echo -e "dig @${DNSSRV[$j]} NAPTR edge.uc.fuze.site +short +timeout=1 | sort\n"
        		dig @${DNSSRV[$j]} NAPTR edge.uc.fuze.site +short +timeout=1 | sort
 		echo 
-		echo -e "***************************************************"
 	done
