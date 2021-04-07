@@ -48,6 +48,13 @@ declare DNSSRV
 echo -e "According to https://public-dns.info there are $SRVTOT DNS servers in $lcc at this time!\n"
 
 if [ $SRVTOT -lt 20 ] ; then
+	if [ $SRVTOT -eq 1 ] ; then
+		echo -e "*** Now Testing ${DNSSRV[0]} ***"
+		echo
+       		echo -e "dig @${DNSSRV[0]} NAPTR edge.uc.fuze.site +short | sort\n"
+       		dig @${DNSSRV[0]} NAPTR edge.uc.fuze.site +short | sort
+		exit 
+	fi
 #
 # Found this method to print the array nicely into columns.  The "tab stop" in the printf notation helps.
 	echo "Here's the whole list:"
@@ -62,6 +69,7 @@ else
 fi
 
 echo 
+
 
 # Ask how many to poll?
 # set a temporary variable "snum" to be larger than the number of items in the DNSSRV array count SRVTOT
