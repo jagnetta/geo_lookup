@@ -108,7 +108,7 @@ for i in $(seq 0 $snum)
 echo
 for j in $(seq 0 $snum)
 	do
-		echo -e "*** Now Testing ${DNSSRV[$j]} ***"
+		echo -e "*** Now Testing ${DNSSRV[$j]}, <Ctrl+c> to skip ***"
 		echo
        		echo -e "dig @${DNSSRV[$j]} NAPTR edge.uc.fuze.site +short | sort\n"
        		dig @${DNSSRV[$j]} NAPTR edge.uc.fuze.site +short | sort
