@@ -49,7 +49,7 @@ echo -e "According to https://public-dns.info there are $SRVTOT DNS servers in $
 
 if [ $SRVTOT -lt 20 ] ; then
 	if [ $SRVTOT -eq 1 ] ; then
-		echo -e "*** Now Testing ${DNSSRV[0]} ***"
+		echo -e "*** Now Testing ${DNSSRV[0]}, <Ctrl+c> to skip ***"
 		echo
        		echo -e "dig @${DNSSRV[0]} NAPTR edge.uc.fuze.site +short | sort\n"
        		dig @${DNSSRV[0]} NAPTR edge.uc.fuze.site +short | sort
