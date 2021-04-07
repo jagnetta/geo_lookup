@@ -25,7 +25,6 @@ declare DNSSRV
 			IFS=$'\n' read -d '' -r -a DNSSRV < ./dnssrv_list.txt
 			rm ./dnssrv_list.txt
 			((SRVTOT=${#DNSSRV[@]}))
-			echo "Found $SRVTOT DNS Servers in $lcc"
 		done
 	else
 		CC=`echo $1`
@@ -34,8 +33,7 @@ declare DNSSRV
                 IFS=$'\n' read -d '' -r -a DNSSRV < ./dnssrv_list.txt
                 rm ./dnssrv_list.txt
                 ((SRVTOT=${#DNSSRV[@]}))
-                echo "Found $SRVTOT DNS Servers in $lcc"
-                while [[ ($SRVTOT = 0) ]]; do
+                while [[ ! $CC =~ ^[A-Za-z]{2}$ || ($SRVTOT = 0) ]]; do
                         echo -e -n "Enter a 2 Letter Country Abbreviation (e.g., gb, de, au):  "
                         read -r CC
                         lcc=`echo $CC | tr '[:upper:]' '[:lower:]'`
@@ -43,7 +41,6 @@ declare DNSSRV
                         IFS=$'\n' read -d '' -r -a DNSSRV < ./dnssrv_list.txt
                         rm ./dnssrv_list.txt
                         ((SRVTOT=${#DNSSRV[@]}))
-                        echo "Found $SRVTOT DNS Servers in $lcc"
 		done
 	fi
 #
