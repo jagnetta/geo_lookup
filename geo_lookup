@@ -3,6 +3,7 @@
 # declare the DNSSRV list array
 
 declare DNSSRV
+declare ANSWER
 
 # Check whether the user had supplied -h or --help.  If yes, then display usage example.
 #
@@ -11,7 +12,7 @@ declare DNSSRV
 			echo -e "\nUsage: $0 <2 Letter Country Abbreviation>"
 			echo -e "\nThis script will attempt to resolve NAPTR for Fuze's public GeoDNS domain by using a Public DNS Server in the chosen country.  "
 			echo -e "Enter a 2 letter country code (e.g., gb, de, au, etc.).  If at least 1 result for a Public DNS Server is found, then the command issued is:"
-			echo -e "\n\tdig @SERVER NAPTR edge.uc.fuze.site +short +timeout=1"
+			echo -e "\n\tdig @SERVER NAPTR edge.uc.fuze.site +short +timeout=3"
 			echo -e "\nThis script references Public DNS Server information from:\thttps://public-dns.info/#countries"
 			echo -e "\nThe script uses the country code provided to find the IP addresses of public DNS servers in that country from the corresponding list found at the https://public-dns.info website.\n" 
 			exit 1
@@ -55,8 +56,8 @@ if [ $SRVTOT -lt 20 ] ; then
 	if [ $SRVTOT -eq 1 ] ; then
 		echo -e "*** Now Testing ${DNSSRV[0]}, <Ctrl+c> to skip ***"
 		echo
-       		echo -e "dig @${DNSSRV[0]} NAPTR edge.uc.fuze.site +short +timeout=1 | sort\n"
-       		dig @${DNSSRV[0]} NAPTR edge.uc.fuze.site +short +timeout=1 | sort
+       		echo -e "dig @${DNSSRV[0]} NAPTR edge.uc.fuze.site +short +timeout=3\n"
+       		dig @${DNSSRV[0]} NAPTR edge.uc.fuze.site +short +timeout=3
 		exit 
 	fi
 #
@@ -113,11 +114,42 @@ for i in $(seq 0 $snum)
 #
 # Lookup the Fuze Domain from the DNS Server in that Country
 
+
+((a=0))
 for j in $(seq 0 $snum)
 	do
 		echo -e "*** Now Testing ${DNSSRV[$j]}, <Ctrl+c> to skip ***"
-		echo
-       		echo -e "dig @${DNSSRV[$j]} NAPTR edge.uc.fuze.site +short +timeout=1 | sort\n"
-       		dig @${DNSSRV[$j]} NAPTR edge.uc.fuze.site +short +timeout=1 | sort
-		echo 
+		if grep -q ":" <<< ${DNSSRV[$j]}; then
+			echo -e "*** ${DNSSRV[$j]} Fail (Skipping IPv6 Result) ***\n"
+			continue
+		fi
+		NAPTEST=`dig @${DNSSRV[$j]} NAPTR edge.uc.fuze.site +short +timeout=3`
+		if grep -q "timed" <<< $NAPTEST; then 
+			echo -e "*** ${DNSSRV[$j]} Fail (Timeout) ***\n"
+			continue
+		elif [[ -z $NAPTEST ]]; then
+			echo -e "*** ${DNSSRV[$j]} Fail (No Recursion) ***\n"
+			continue
+		fi
+       		echo -e "\ndig @${DNSSRV[$j]} NAPTR edge.uc.fuze.site +short +timeout=3"
+		dig @${DNSSRV[$j]} NAPTR edge.uc.fuze.site +short +timeout=3
+       		ANSWER[$a]=`dig @${DNSSRV[$j]} NAPTR edge.uc.fuze.site +short +timeout=3 | head -1 | cut -d " " -f 6`
+       		
+		echo -e "\ndig @${DNSSRV[$j]} SRV ${ANSWER[$a]} +short +timeout=3"
+		ATEST=`dig @${DNSSRV[$j]} SRV ${ANSWER[$a]} +short +timeout=3`
+		if grep -q "timed" <<< $ATEST; then
+			echo -e "*** ${DNSSRV[$j]} Fail (SRV Timeout) ***\n"
+			continue
+		fi
+	  	dig @${DNSSRV[$j]} SRV ${ANSWER[$a]} +short +timeout=3	
+       		ANSWER[(($a+1))]=`dig @${DNSSRV[$j]} SRV ${ANSWER[$a]} +short +timeout=3 | head -1 | cut -d " " -f 4`
+
+		echo -e "\ndig @${DNSSRV[$j]} ${ANSWER[$a+1]} +short +timeout=3"
+		dig @${DNSSRV[$j]} ${ANSWER[$a+1]} +short +timeout=3
+       		ANSWER[(($a+2))]=`dig @${DNSSRV[$j]} ${ANSWER[(($a+1))]} +short +timeout=3`
+
+	#	echo -e "NAPTR:  ${ANSWER[$a]}"
+	#	echo -e "SRV:  ${ANSWER[$a+1]}"
+	#	echo -e "A:  ${ANSWER[$a+2]}\n"
+	echo
 	done
