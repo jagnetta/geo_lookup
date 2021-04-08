@@ -62,13 +62,17 @@ if [ $SRVTOT -lt 20 ] ; then
 #
 # Found this method to print the array nicely into columns.  The "tab stop" in the printf notation helps.
 	echo "Here's the whole list:"
+	((b=1))
 	for value in "${DNSSRV[@]}"; do 
-    		printf "%-8s\n" "${value}"
+    		printf "%-8s\n" "$b.  ${value}"
+		((b=$b+1))
 	done | column
 else
 	echo "Printing the first 20 from the list, but there are $SRVTOT DNS servers in $lcc:"
+	((b=1))
 	for k in {0..19}; do
-    		printf "%-8s\n" "${DNSSRV[$k]}"
+    		printf "%-8s\n" "$b.  ${DNSSRV[$k]}"
+		((b=$b+1))
 	done | column
 fi
 
