@@ -139,9 +139,9 @@ for j in $(seq 0 $snum)
 	  	dig @${DNSSRV[$j]} SRV ${ANSWER[$a]} +short +timeout=3	
        		ANSWER[(($a+1))]=`dig @${DNSSRV[$j]} SRV ${ANSWER[$a]} +short +timeout=3 | head -1 | cut -d " " -f 4`
 
-		ATEST=`dig @${DNSSRV[$j]} SRV ${ANSWER[$a]} +short +timeout=3`
+		ATEST=`dig @${DNSSRV[$j]} ${ANSWER[$a]} +short +timeout=3`
 		if grep -q "timed" <<< $ATEST; then
-			echo -e "*** ${DNSSRV[$j]} Fail (SRV Timeout) ***\n"
+			echo -e "*** ${DNSSRV[$j]} Fail (Timeout) ***\n"
 			continue
 		fi
 		echo -e "\ndig @${DNSSRV[$j]} ${ANSWER[$a+1]} +short +timeout=3"
