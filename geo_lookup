@@ -8,11 +8,12 @@ declare DNSSRV
 #
 	if [[ $1 == "--help" || $1 == "-h" ]]
 		then
-			echo -e "\nThis script will attempt to resolve NAPTR for Fuze's public GeoDNS domain by using a Public DNS Server in the chosen country.  Enter a 2 letter country code (e.g., gb, de, au, etc.).  If there is at least 1 result for a Public DNS Server is found, then the command issued is:"
+			echo -e "\nUsage: $0 <2 Letter Country Abbreviation>"
+			echo -e "\nThis script will attempt to resolve NAPTR for Fuze's public GeoDNS domain by using a Public DNS Server in the chosen country.  "
+			echo -e "Enter a 2 letter country code (e.g., gb, de, au, etc.).  If at least 1 result for a Public DNS Server is found, then the command issued is:"
 			echo -e "\n\tdig @SERVER NAPTR edge.uc.fuze.site +short +timeout=1"
-			echo -e "\nUsage: $0 <2 Letter Country Abbreviation>."
 			echo -e "\nThis script references Public DNS Server information from:\thttps://public-dns.info/#countries"
-			echo -e "\nThe script uses the country code provided to find the IP addresses of public DNS servers in that country from such a list on the <public-dns.info> website.\n" 
+			echo -e "\nThe script uses the country code provided to find the IP addresses of public DNS servers in that country from the corresponding list found at the https://public-dns.info website.\n" 
 			exit 1
 	fi
 #
